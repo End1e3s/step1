@@ -1,0 +1,21 @@
+# 忽略编译生成的中间文件夹
+Debug/
+Release/
+FLASH/
+RAM/
+
+# 忽略编译产生的各种临时文件
+*.obj
+*.out
+*.map
+*.pp
+*.mk
+*.lkf
+*.lpp
+
+# 忽略 CCS/Eclipse 的本地用户配置 (换电脑就失效的配置)
+.launches/
+.settings/
+*.tmp
+*.bak
+.clangd
