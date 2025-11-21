@@ -68,25 +68,15 @@ int main(void)
     DL_TimerA_startCounter(PWM_WHEEL_INST);
     uint32_t count=0;
     count=Set_Circles();
-    // Set_Path(count);
     for (int i = 0; i < count * 4; i++) {
-        // FollowLineWithCorrection(); // 直到检测到路口 return
         FollowLineWithCorrection();
-        // 转弯（左转）
-        // TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-        // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-        // delay_ms(280); // 调节转弯角度
     }
 
     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
     while (1) 
     {
-        // FollowLineWithCorrection();
-        // TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-        // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-        // TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-        // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_REVERSE);
+
     }
 }
     typedef enum {
@@ -134,19 +124,7 @@ bool FollowLineWithCorrection() {
             }
             break;
     }
-        //黑1 白0
-                // ===== 路口判定 =====
-        //if (sensor_state == 0b11100 || sensor_state == 0b11000 || sensor_state == 0b11110) {
-        // if (sensor_state == 0b00000) {
-        //     stable_corner_count++;
-        // } else {
-        //     stable_corner_count = 0;  // 一旦不满足，重置
-        // }
 
-        // if (stable_corner_count >= stable_threshold) {
-        //     // 到达路口，返回上一层进行转弯
-        //     return true;
-        // }
         switch (sensor_state) {
             case 0b00100:
                 TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
@@ -204,109 +182,6 @@ bool FollowLineWithCorrection() {
     }
 }
 
-// void FollowLineWithCorrection() {
-//     int time_ms = 1590;  // 每段跑 1.5 秒左右
-//     int step = 5;
-//     // for (int i = 0; i < time_ms / step; i++) {
-//     while(1){
-//         uint8_t lm = DL_GPIO_readPins(GPIO_SENSOR_PORT, GPIO_SENSOR_SENSOR_LEFTMOST_PIN0_PIN);
-//         uint8_t l  = DL_GPIO_readPins(GPIO_SENSOR_PORT, GPIO_SENSOR_SENSOR_LEFT_PIN0_PIN);
-//         uint8_t c  = DL_GPIO_readPins(GPIO_SENSOR_PORT, GPIO_SENSOR_SENSOR_CENTER_PIN0_PIN);
-//         uint8_t r  = DL_GPIO_readPins(GPIO_SENSOR_PORT, GPIO_SENSOR_SENSOR_RIGHT_PIN0_PIN);
-//         uint8_t rm = DL_GPIO_readPins(GPIO_SENSOR_PORT, GPIO_SENSOR_SENSOR_RIGHTMOST_PIN0_PIN);
-//         uint8_t cnt=0;
-//         // 黑线为0，白为1，所以判断反转
-//          // 严重偏左：最左传感器检测到黑线，需要右转修正
-//         // if (!lm) {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD); // 原地右转
-//         // }
-//         // // 严重偏右：最右传感器检测到黑线，需要左转修正
-//         // else if (!rm) {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_REVERSE); // 原地左转
-//         // }
-//         // // 微偏左：左侧或中心左侧传感器检测到黑线，小幅度向右修正
-//         // else if (!l) {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD); // 右轮前进，左轮停
-//         // }
-//         // // 微偏右：右侧或中心右侧传感器检测到黑线，小幅度向左修正
-//         // else if (!r) {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP); // 左轮前进，右轮停
-//         // }
-//         // // 黑线居中：只有中心传感器检测到黑线，直行
-//         // else if (!c) {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//         // }
-//         // // 找不到黑线：所有传感器都为白线，停止
-//         // else {
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//         // }
-//         // if (lm && l && c && r && rm) {
-//         // //     // 严重偏左 → 原地左转
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//         // // } else if (!rm) {
-//         // //     // 严重偏右 → 原地右转
-//         // //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//         // //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_REVERSE);
-//         // } else 
-//         // if (lm && l && c && r && rm) {
-//         //     // 到尽头 → 停止，退出
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//         //     delay_ms(50); // 确保稳定停下
-//         //     MakePreciseTurn(); // 关键：此时转弯！
-//         //     break;
-//         // }
-
-//         if (!c && l && r) {
-//             // 黑线居中 → 直走
-//             TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//             TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-        
-//         }else if(!lm && !l && !c){
-//             TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//             TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//             delay_ms(50);
-//             TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-//             TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//             delay_ms(100);
-//             // TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//             // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//             // delay_ms(20);
-//             // TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_REVERSE);
-//             // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//             // delay_ms(96);
-//         }
-//         else if ((!l && c) ) {
-//             // 微偏左 → 向左修正
-//             TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//             TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//         } else if ((!r && c)) {
-//             // 微偏右 → 向右修正
-//             TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_FORWARD);
-//             TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//         }
-//         // else if(lm && c && l && r && rm){
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT,MOTOR_REVERSE);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//         // } 
-//         // else  {
-//         //     // 无法识别（可能全白） → 停止
-//         //     TB6612_SetMotorDirection(MOTOR_LEFT, MOTOR_STOP);
-//         //     TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_STOP);
-//         //     // delay_ms(300);
-//         //     // TB6612_SetMotorDirection(MOTOR_LEFT,MOTOR_REVERSE);
-//         //     // TB6612_SetMotorDirection(MOTOR_RIGHT, MOTOR_FORWARD);
-//         // }
-//         delay_ms(step);
-//     }
-// }
 
 void MakePreciseTurn() {
     // 原地左转（逆时针）    
